@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-rosewater: #f5e0dc;
+    --color-flamingo: #f2cdcd;
+    --color-pink: #f5c2e7;
+    --color-mauve: #cba6f7;
+    --color-red: #f38ba8;
+    --color-maroon: #eba0ac;
+    --color-peach: #fab387;
+    --color-yellow: #f9e2af;
+    --color-green: #a6e3a1;
+    --color-teal: #94e2d5;
+    --color-sky: #89dceb;
+    --color-sapphire: #74c7ec;
+    --color-blue: #89b4fa;
+    --color-lavender: #b4befe;
+    --color-text: #cdd6f4;
+    --color-subtext1: #bac2de;
+    --color-subtext0: #a6adc8;
+    --color-overlay2: #9399b2;
+    --color-overlay1: #7f849c;
+    --color-overlay0: #6c7086;
+    --color-surface2: #585b70;
+    --color-surface1: #45475a;
+    --color-surface0: #313244;
+    --color-base: #1e1e2e;
+    --color-mantle: #181825;
+    --color-crust: #11111b;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply min-h-screen;
+    background-color: var(--color-base);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection {
+    background-color: var(--color-surface2);
+    color: var(--color-text);
+  }
+}
+
+@layer components {
+  .card-surface {
+    background-color: var(--color-surface0);
+    border-color: var(--color-surface1);
+  }
+
+  .card-hover:hover {
+    background-color: var(--color-surface1);
+    border-color: var(--color-surface2);
+  }
+
+  .text-muted {
+    color: var(--color-subtext0);
+  }
+
+  .text-subtle {
+    color: var(--color-subtext1);
+  }
+
+  .border-surface {
+    border-color: var(--color-surface0);
+  }
+
+  .bg-surface {
+    background-color: var(--color-surface0);
+  }
+
+  .bg-mantle {
+    background-color: var(--color-mantle);
+  }
+
+  .bg-base {
+    background-color: var(--color-base);
+  }
+
+  .bg-crust {
+    background-color: var(--color-crust);
+  }
+
+  .accent-gradient {
+    background: linear-gradient(135deg, var(--color-mauve), var(--color-pink));
+  }
+
+  .accent-gradient-teal {
+    background: linear-gradient(135deg, var(--color-teal), var(--color-sky));
+  }
+
+  .accent-gradient-peach {
+    background: linear-gradient(135deg, var(--color-peach), var(--color-yellow));
+  }
+
+  .card-front-gradient {
+    background: linear-gradient(135deg, var(--color-mauve), var(--color-lavender));
+  }
+
+  .shadow-colored {
+    box-shadow: 0 10px 40px -10px color-mix(in srgb, var(--color-mauve) 30%, transparent);
+  }
+
+  .btn-primary {
+    background-color: var(--color-mauve);
+    color: var(--color-base);
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-pink);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-surface1);
+    color: var(--color-text);
+    border: 1px solid var(--color-surface2);
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-surface2);
+  }
+
+  .game-tile {
+    background-color: var(--color-mantle);
+    border: 1px solid var(--color-surface0);
+    transition: all 0.2s ease;
+  }
+
+  .game-tile:hover {
+    background-color: var(--color-surface0);
+    border-color: var(--color-mauve);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px -10px color-mix(in srgb, var(--color-mauve) 40%, transparent);
+  }
+
+  .progress-bar {
+    background-color: var(--color-surface0);
+  }
+
+  .progress-fill {
+    background: linear-gradient(90deg, var(--color-mauve), var(--color-pink));
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  .text-lavender { color: var(--color-lavender); }
+  .text-mauve { color: var(--color-mauve); }
+  .text-pink { color: var(--color-pink); }
+  .text-teal { color: var(--color-teal); }
+  .text-sky { color: var(--color-sky); }
+  .text-peach { color: var(--color-peach); }
+  .text-yellow { color: var(--color-yellow); }
+  .text-green { color: var(--color-green); }
+  .text-blue { color: var(--color-blue); }
+  .text-sapphire { color: var(--color-sapphire); }
+
+  .border-mauve { border-color: var(--color-mauve); }
+  .border-lavender { border-color: var(--color-lavender); }
+
+  .bg-mauve\/20 { background-color: color-mix(in srgb, var(--color-mauve) 20%, transparent); }
+  .bg-pink\/20 { background-color: color-mix(in srgb, var(--color-pink) 20%, transparent); }
+  .bg-teal\/20 { background-color: color-mix(in srgb, var(--color-teal) 20%, transparent); }
+}
