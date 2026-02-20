@@ -1,0 +1,112 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: card-game-platform
+  namespace: card-games-platform
+  annotations:
+    cert-manager.io/cluster-issuer: http-01
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - card-games.tkops.cloud
+      secretName: card-games-tls
+  rules:
+    - host: card-games.tkops.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: card-game-platform
+                port:
+                  number: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: card-games-platform
+  name: card-game-platform
+  labels:
+    app: card-game-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: card-game-platform
+  template:
+    metadata:
+      labels:
+        app: card-game-platform
+    spec:
+      containers:
+      - name: nginx
+        image: tkopsacr.azurecr.io/card-game-platform:v1.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: cache
+          mountPath: /var/cache/nginx
+        - name: run
+          mountPath: /var/run
+        - name: tmp
+          mountPath: /tmp
+        - name: logs
+          mountPath: /var/log/nginx
+      volumes:
+      - name: cache
+        emptyDir: {}
+      - name: run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: card-games-platform
+  name: card-game-platform
+  labels:
+    app: card-game-platform
+spec:
+  type: ClusterIP
+  selector:
+    app: card-game-platform
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+
