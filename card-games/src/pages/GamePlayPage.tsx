@@ -32,6 +32,19 @@ export default function GamePlayPage() {
     }
   }, [isActive, game, navigate])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && !isFirstCard) {
+        previousCard()
+      } else if (e.key === 'ArrowRight' && !isLastCard) {
+        nextCard()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isFirstCard, isLastCard, previousCard, nextCard])
+
   if (!game || !currentCard) {
     return (
       <div className="text-center py-12 animate-fade-in">
@@ -76,44 +89,50 @@ export default function GamePlayPage() {
         {t.game.endGame}
       </button>
 
-      <div className="flex-1 flex flex-col justify-center">
-        <CardComponent
-          card={currentCard}
-          isFlipped={isFlipped}
-          onFlip={handleCardClick}
-          cardNumber={currentCardIndex + 1}
-          totalCards={game.cards.length}
-        />
-      </div>
-
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="flex-1 flex items-center justify-center gap-4">
         {!isFirstCard && (
           <button
             onClick={previousCard}
-            className="btn-secondary px-6 py-3 rounded-xl font-medium"
+            className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center btn-secondary hover:scale-110 transition-transform"
+            aria-label="Previous card"
           >
-            {t.game.previous}
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
         )}
-        
+
+        <div className="flex-1 max-w-md">
+          <CardComponent
+            card={currentCard}
+            isFlipped={isFlipped}
+            onFlip={handleCardClick}
+            cardNumber={currentCardIndex + 1}
+            totalCards={game.cards.length}
+          />
+        </div>
+
         {!isLastCard ? (
           <button
             onClick={nextCard}
-            className="btn-primary px-6 py-3 rounded-xl font-medium shadow-sm"
+            className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center btn-primary hover:scale-110 transition-transform"
+            aria-label="Next card"
           >
-            {t.game.nextQuestion}
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         ) : (
-          <div className="flex gap-3">
+          <div className="flex-shrink-0 flex gap-2">
             <button
               onClick={handleRestart}
-              className="btn-secondary px-6 py-3 rounded-xl font-medium"
+              className="px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-medium btn-secondary"
             >
               {t.game.playAgain}
             </button>
             <button
               onClick={handleEndGame}
-              className="btn-primary px-6 py-3 rounded-xl font-medium shadow-sm"
+              className="px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-medium btn-primary"
             >
               {t.game.finish}
             </button>
