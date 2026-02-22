@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomáš a Valentýna | Svatební web</title>
+    
+    <!-- ==================== GOOGLE FONTS ==================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS PROMĚNNÉ ==================== */
+        :root {
+            /* ----- ZMĚNIT BARVY ZDE ----- */
+            --color-black: #0a0a0a;
+            --color-black-soft: #1a1a1a;
+            --color-gold: #c9a962;
+            --color-gold-light: #e5d4a1;
+            --color-gold-dark: #a68b4b;
+            --color-white: #ffffff;
+            --color-white-soft: #f5f5f5;
+            --color-cream: #faf8f5;
+            
+            /* Typografie */
+            --font-heading: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Montserrat', Arial, sans-serif;
+            
+            /* Mezery */
+            --section-padding: 80px 20px;
+            --container-max: 1100px;
+        }
+
+        /* ==================== RESET A ZÁKLADY ==================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-cream);
+            color: var(--color-black);
+            line-height: 1.7;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* ==================== TYPOGRAFIE ==================== */
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            letter-spacing: 0.05em;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: clamp(1.3rem, 3vw, 1.6rem);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .text-gold {
+            color: var(--color-gold);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* ==================== KONTEJNER ==================== */
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ==================== HERO SEKCE ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: 
+                linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(26, 26, 26, 0.75) 100%),
+                url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80') center/cover no-repeat;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* Jemný zlatý okraj nahoře */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+        }
+
+        .hero__names {
+            font-family: var(--font-heading);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--color-gold-light);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+
+        .hero__title {
+            color: var(--color-white);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.6s forwards;
+        }
+
+        .hero__title span {
+            display: block;
+            font-style: italic;
+            font-size: 0.6em;
+            color: var(--color-gold-light);
+            margin-top: 0.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .hero__date {
+            font-family: var(--font-heading);
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            color: var(--color-gold);
+            letter-spacing: 0.15em;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.9s forwards;
+        }
+
+        .hero__scroll {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-gold-light);
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease 1.2s forwards;
+        }
+
+        .hero__scroll::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--color-gold), transparent);
+            margin: 15px auto 0;
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        /* ==================== ODDĚLOVAČ ==================== */
+        .divider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .divider__line {
+            width: 80px;
+            height: 1px;
+            background: var(--color-gold);
+        }
+
+        .divider__icon {
+            margin: 0 20px;
+            color: var(--color-gold);
+            font-size: 1.2rem;
+        }
+
+        /* ==================== SEKCE ==================== */
+        section {
+            padding: var(--section-padding);
+        }
+
+        .section--dark {
+            background-color: var(--color-black-soft);
+            color: var(--color-white-soft);
+        }
+
+        .section--cream {
+            background-color: var(--color-cream);
+        }
+
+        .section__header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section__title {
+            color: var(--color-black);
+        }
+
+        .section--dark .section__title {
+            color: var(--color-white);
+        }
+
+        .section__subtitle {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--color-gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ==================== GALERIE ==================== */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery__item {
+            position: relative;
+            aspect-ratio: 4/5;
+            overflow: hidden;
+            background-color: var(--color-black-soft);
+        }
+
+        .gallery__item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, opacity 0.4s ease;
+        }
+
+        .gallery__item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Placeholder styl - odstranit po přidání obrázků */
+        .gallery__placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--color-black-soft) 0%, var(--color-black) 100%);
+            color: var(--color-gold);
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .gallery__placeholder span {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+
+        /* ==================== HARMONOGRAM ==================== */
+        .schedule {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .schedule__item {
+            display: flex;
+            gap: 30px;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(201, 169, 98, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .schedule__item:hover {
+            background-color: rgba(201, 169, 98, 0.05);
+        }
+
+        .schedule__item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule__time {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            color: var(--color-gold);
+            min-width: 80px;
+            letter-spacing: 0.05em;
+        }
+
+        .schedule__content h3 {
+            margin-bottom: 0.3rem;
+            color: var(--color-black);
+        }
+
+        .section--dark .schedule__content h3 {
+            color: var(--color-white);
+        }
+
+        .schedule__content p {
+            color: var(--color-white-soft);
+            opacity: 0.8;
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .section--cream .schedule__content p {
+            color: var(--color-black-soft);
+            opacity: 0.7;
+        }
+
+        /* ==================== MÍSTO KONÁNÍ ==================== */
+        .venue {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .venue {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .venue__info {
+            padding: 20px;
+        }
+
+        .venue__info h3 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            color: var(--color-gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .venue__details {
+            font-style: normal;
+            line-height: 2;
+        }
+
+        .venue__details p {
+            margin-bottom: 0.5rem;
+        }
+
+        .venue__map {
+            aspect-ratio: 16/10;
+            background-color: var(--color-black-soft);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-gold-light);
+            font-family: var(--font-heading);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .venue__map::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--color-gold);
+            opacity: 0.3;
+        }
+
+        /* ==================== DÁRKY ==================== */
+        .gifts {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .gifts__icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .gifts__text {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: var(--color-white-soft);
+        }
+
+        .gifts__text strong {
+            color: var(--color-gold);
+            font-weight: 500;
+        }
+
+        .gifts__note {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(201, 169, 98, 0.3);
+            font-style: italic;
+            color: var(--color-gold-light);
+            opacity: 0.8;
+        }
+
+        /* ==================== FOOTER ==================== */
+        footer {
+            background-color: var(--color-black);
+            color: var(--color-gold-light);
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer__heart {
+            color: var(--color-gold);
+            font-size: 1.2rem;
+        }
+
+        /* ==================== ANIMACE ==================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==================== RESPONSIVITA ==================== */
+        @media (max-width: 600px) {
+            :root {
+                --section-padding: 60px 20px;
+            }
+
+            .schedule__item {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .schedule__time {
+                font-size: 1.2rem;
+            }
+
+            .hero__names {
+                letter-spacing: 0.15em;
+            }
+        }
+
+        /* ==================== TISK ==================== */
+        @media print {
+            .hero {
+                min-height: auto;
+                padding: 60px 20px;
+                background: none !important;
+                color: black !important;
+            }
+            
+            .hero__title, .hero__date {
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== HERO SEKCE ==================== -->
+    <header class="hero">
+        <!-- ----- ZMĚNIT POZADÍ ZDE: Nahraďte URL obrázku ----- -->
+        <!-- Pozadí je nastaveno v CSS (.hero) - můžete změnit v :root sekci -->
+        
+        <p class="hero__names">Tomáš & Valentýna</p>
+        
+        <h1 class="hero__title">
+            Řekneme si ano
+            <span>6. června 2026</span>
+        </h1>
+        
+        <p class="hero__date">06. 06. 2026</p>
+        
+        <p class="hero__scroll">Srolujte dolů</p>
+    </header>
+
+    <!-- ==================== HARMONOGRAM ==================== -->
+    <section class="section--dark" id="harmonogram">
+        <div class="container">
+            <div class="section__header fade-in">
+                <p class="section__subtitle">Náš velký den</p>
+                <h2 class="section__title">Harmonogram</h2>
+            </div>
+            
+            <div class="schedule">
+                <!-- 
+                ----- ZMĚNIT HARMONOGRAM ZDE -----
+                Upravte časy a popisy podle vašeho plánu
+                -->
+                
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">12:00</span>
+                    <div class="schedule__content">
+                        <h3>Sraz hostů</h3>
+                        <p>Příjezd a uvítání svatebních hostů</p>
+                    </div>
+                </div>
+                
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">13:00</span>
+                    <div class="schedule__content">
+                        <h3>Obřad</h3>
+                        <p>Slavnostní sňatek a výměna prstenů s přípitkem</p>
+                    </div>
+                </div>
+                
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">14:00</span>
+                    <div class="schedule__content">
+                        <h3>Společné fotografie</h3>
+                        <p>Společné fotografie ve skupinkách</p>
+                    </div>
+                </div>
+                
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">14:30</span>
+                    <div class="schedule__content">
+                        <h3>Hostina</h3>
+                        <p>Slavnostní oběd a proslovy svšdků</p>
+                    </div>
+                </div>
+                
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">16:00</span>
+                    <div class="schedule__content">
+                        <h3>Střevíčky a stuha</h3>
+                        <p>Zábava s novým párem a jak to u nás je a šance pro nové</p>
+                    </div>
+                </div>
+
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">16:00</span>
+                    <div class="schedule__content">
+                        <h3>Střevíčky</h3>
+                        <p>Zábava s novým párem a jak to u nás je</p>
+                    </div>
+                </div>
+                
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">17:00</span>
+                    <div class="schedule__content">
+                        <h3>Focení vol. 2</h3>
+                        <p>Focení se skupinkami přátel</p>
+                    </div>
+                </div>
+
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">18:00</span>
+                    <div class="schedule__content">
+                        <h3>Tanyny</h3>
+                        <p>Tancovaní s rodiči a první tanec + raut</p>
+                    </div>
+                </div>
+
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">19:00</span>
+                    <div class="schedule__content">
+                        <h3>Romantická vložka</h3>
+                        <p>Odběhnutí novomanželů s Patrikem a chvilka pro sebe</p>
+                    </div>
+                </div>
+
+                <div class="schedule__item fade-in">
+                    <span class="schedule__time">20:00</span>
+                    <div class="schedule__content">
+                        <h3>AZ kviz</h3>
+                        <p>Skupinová soutěž</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MÍSTO KONÁNÍ ==================== -->
+    <section class="section--cream" id="mistokonani">
+        <div class="container">
+            <div class="section__header fade-in">
+                <p class="section__subtitle">Kde to bude</p>
+                <h2 class="section__title">Místo konání</h2>
+            </div>
+            
+            <div class="venue fade-in">
+                <div class="venue__info">
+                    <!-- 
+                    ----- ZMĚNIT ADRESU ZDE -----
+                    Sem napište skutečnou adresu svatebního místa
+                    -->
+                    <h3>Zámek Milotice</h3>
+                    
+                    <address class="venue__details">
+                        <p>Nádvoří 1</p>
+                        <p>685 01 Milotice</p>
+                        <p>Česká republika</p>
+                    </address>
+                    
+                    <div class="divider" style="justify-content: flex-start; padding: 20px 0;">
+                        <div class="divider__line"></div>
+                    </div>
+                    
+                    <p style="font-size: 0.95rem; opacity: 0.8;">
+                        Těšíme se na vás na krásném místě,
+                        které pro nás má zvláštní význam.
+                    </p>
+                </div>
+                
+                <div class="venue__map">
+                    <!-- 
+                    ----- ZMĚNIT MAPU ZDE -----
+                    Nahraďte tento placeholder mapovým iframe (Google Maps)
+                    nebo vložte vlastní obrázek
+                    -->
+                    <div style="text-align: center;">
+                        <p style="font-size: 1.5rem; margin-bottom: 10px;">📍</p>
+                        <p>Mapa bude brzy k dispozici</p>
+                        <!-- Příklad vložení Google Maps:
+                        <iframe src="https://www.google.com/maps/..." width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== DÁRKY ==================== -->
+    <section class="section--dark" id="darky">
+        <div class="container">
+            <div class="gifts fade-in">
+                <div class="gifts__icon">💝</div>
+                
+                <!-- 
+                ----- ZMĚNIT TEXT O DÁRCÍCH ZDE -----
+                Upravte text podle vašich preferencí
+                -->
+                <h2 style="margin-bottom: 1.5rem; color: var(--color-white);">Darujte nám kousek štěstí</h2>
+                
+                <p class="gifts__text">
+                    Víme, že <strong>svatební dar</strong> je tradiční součástí oslav, 
+                    ale dovolte nám malou upřímnost: 
+                    <strong>největším darem pro nás je vaše přítomnost!</strong>
+                </p>
+                
+                <p class="gifts__text">
+                    Pokud nám přece jen chcete udělat radost, 
+                    budeme vděční za <strong>příspěvek na naši svatební cestu</strong> 
+                    nebo začátek našeho společného života.
+                </p>
+                
+                <p class="gifts__text">
+                    A co myslíte – dáme přednost romantickému večeru v Paříži, 
+                    nebo dobrodružství v Thajsku? 
+                    <em>To necháme na vás! 🌍</em>
+                </p>
+                
+                <p class="gifts__note">
+                    Děkujeme za pochopení a za to, že sdílíte s námi tento zvláštní den.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==================== GALERIE ==================== -->
+    <section class="section--cream" id="galerie">
+        <div class="container">
+            <div class="section__header fade-in">
+                <p class="section__subtitle">Naše společné chvíle</p>
+                <h2 class="section__title">Galerie</h2>
+            </div>
+            
+            <div class="gallery">
+                <div class="gallery__item fade-in">
+                    <img src="IMG_0250.JPEG" alt="Svatební foto 1">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_0729.JPEG" alt="Svatební foto 2">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_0996.JPEG" alt="Svatební foto 3">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_1042.JPEG" alt="Svatební foto 4">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_1191.JPEG" alt="Svatební foto 5">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_1231.JPEG" alt="Svatební foto 6">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_1236.JPEG" alt="Svatební foto 7">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_1667.JPEG" alt="Svatební foto 8">
+                </div>
+
+                <div class="gallery__item fade-in">
+                    <img src="IMG_1761.JPEG" alt="Svatební foto 5">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_2001.JPEG" alt="Svatební foto 6">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_2061.JPEG" alt="Svatební foto 7">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_2475.JPEG" alt="Svatební foto 8">
+                </div>
+
+                <div class="gallery__item fade-in">
+                    <img src="IMG_2584.JPEG" alt="Svatební foto 6">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_2721.JPEG" alt="Svatební foto 7">
+                </div>
+                
+                <div class="gallery__item fade-in">
+                    <img src="IMG_2782.JPEG" alt="Svatební foto 8">
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <p>Tomáš & Valentýna</p>
+        <p>6. června 2026</p>
+        <p><span class="footer__heart">♥</span></p>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ----- FADE-IN ANIMACE PRI SCROLLU -----
+        // Jednoduchý script pro animaci sekcí při scrollování
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Nastavení observeru pro fade-in animace
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Po přidání třídy už nepozorovat (pro výkon)
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            fadeElements.forEach(function(el) {
+                observer.observe(el);
+            });
+            
+            // ----- ZPOMALENÝ SCROLL PRO HLADKÝ DOJEM -----
+            // Odstraněno - může být problém pro uživatele
+            // Pokud chcete zpomalený scroll, odkomentujte:
+            /*
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            */
+        });
+    </script>
+
+</body>
+</html>
