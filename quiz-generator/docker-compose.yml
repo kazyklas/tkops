@@ -1,35 +1,21 @@
-version: '3.8'
-
 services:
-  backend:
+  app:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  frontend:
-    build:
-      context: ./frontend
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:80"
     environment:
-      - VITE_API_URL=/api
+      - NODE_ENV=production
+      - PORT=3001
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - VITE_AD_PROVIDER_ID=${VITE_AD_PROVIDER_ID:-}
       - VITE_AD_SLOT_TOP=${VITE_AD_SLOT_TOP:-}
       - VITE_AD_SLOT_BOTTOM=${VITE_AD_SLOT_BOTTOM:-}
       - VITE_AD_SLOT_VIDEO=${VITE_AD_SLOT_VIDEO:-}
-    depends_on:
-      - backend
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

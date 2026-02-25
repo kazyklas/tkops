@@ -43,9 +43,9 @@ export default function Results() {
   const { correct, total, percentage } = calculateScore();
 
   const getPerformanceMessage = () => {
-    if (percentage >= 90) return 'Excellent!';
-    if (percentage >= 70) return 'Good job!';
-    if (percentage >= 50) return 'Not bad!';
+    if (percentage >= 90) return 'Outstanding!';
+    if (percentage >= 70) return 'Great job!';
+    if (percentage >= 50) return 'Good effort!';
     return 'Keep practicing!';
   };
 
@@ -57,7 +57,7 @@ export default function Results() {
   };
 
   return (
-    <div className="results animate-fade-in">
+    <div className="results">
       <AdBanner position="top" />
       
       <div className="results-container">
@@ -90,7 +90,7 @@ export default function Results() {
                 className={`answer-item ${isCorrect ? 'correct' : 'incorrect'}`}
               >
                 <div className="answer-header">
-                  <span className="answer-number">Q{idx + 1}</span>
+                  <span className="answer-number">Question {idx + 1}</span>
                   <span className={`answer-status ${isCorrect ? 'correct' : 'incorrect'}`}>
                     {isCorrect ? '✓' : '✗'}
                   </span>
@@ -119,6 +119,10 @@ export default function Results() {
         </div>
 
         <button className="new-quiz-btn" onClick={handleNewQuiz}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
           Generate New Quiz
         </button>
       </div>

@@ -12,10 +12,10 @@ function buildPrompt(theme, questionCount, questionTypes) {
   
   const types = questionTypes.map(t => typeLabels[t]).join(' and ');
   
-  return `You are.
+  return `You are a quiz generation engine.
 
 Generate a quiz with the following constraints:
-- Theme: a quiz generation engine ${theme}
+- Theme: ${theme}
 - Number of questions: ${questionCount} (maximum 40)
 - Question types: ${types}
 - Do NOT repeat questions.
@@ -35,7 +35,7 @@ Return ONLY valid JSON in the following format:
     {
       "type": "multiple_choice | open",
       "question": "string",
-      "options": ["A", "B", "C", "D"], // only for multiple choice
+      "options": ["A", "B", "C", "D"],
       "correct_answer": "string"
     }
   ]
@@ -47,59 +47,92 @@ Do not include any text before or after the JSON.`;
 export async function generateQuiz(theme, questionCount, questionTypes) {
   const prompt = buildPrompt(theme, questionCount, questionTypes);
   
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      {
-        role: 'system',
-        content: 'You are a precise JSON generator. Always return valid JSON.'
-      },
-      {
-        role: 'user',
-        content: prompt
-      }
-    ],
-    temperature: 0.7,
-    max_tokens: 8000,
-    response_format: { type: 'json_object' }
+  console.log('[OpenAI] Calling API with params:', { 
+    model: 'gpt-4o', 
+    questionCount, 
+    questionTypes,
+    promptLength: prompt.length 
   });
-
-  const content = response.choices[0]?.message?.content;
   
-  if (!content) {
-    throw new Error('Empty response from OpenAI');
-  }
-
   try {
-    const parsed = JSON.parse(content);
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a precise JSON generator. Always return valid JSON.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 8000,
+      response_format: { type: 'json_object' }
+    });
+
+    console.log('[OpenAI] Response received');
+    console.log('[OpenAI] Usage:', response.usage);
     
-    if (!parsed.questions || !Array.isArray(parsed.questions)) {
-      throw new Error('Invalid response format');
+    const content = response.choices[0]?.message?.content;
+    
+    if (!content) {
+      throw new Error('Empty response from OpenAI');
     }
 
-    const validTypes = ['multiple_choice', 'open'];
-    const validQuestions = parsed.questions
-      .slice(0, questionCount)
-      .filter(q => 
-        q.question && 
-        q.correct_answer &&
-        validTypes.includes(q.type) &&
-        (q.type === 'open' || (q.options && q.options.length === 4))
-      )
-      .map(q => ({
-        type: q.type,
-        question: q.question,
-        options: q.type === 'multiple_choice' ? q.options : null,
-        correct_answer: q.correct_answer
-      }));
+    console.log('[OpenAI] Response content length:', content.length);
+    console.log('[OpenAI] Response content preview:', content.substring(0, 200));
 
-    if (validQuestions.length === 0) {
-      throw new Error('No valid questions generated');
+    try {
+      const parsed = JSON.parse(content);
+      console.log('[OpenAI] Parsed JSON, questions count:', parsed.questions?.length || 0);
+      
+      if (!parsed.questions || !Array.isArray(parsed.questions)) {
+        throw new Error('Invalid response format - no questions array');
+      }
+
+      const validTypes = ['multiple_choice', 'open'];
+      const validQuestions = parsed.questions
+        .slice(0, questionCount)
+        .filter(q => {
+          const isValid = 
+            q.question && 
+            q.correct_answer &&
+            validTypes.includes(q.type) &&
+            (q.type === 'open' || (q.options && q.options.length === 4));
+          
+          if (!isValid) {
+            console.log('[OpenAI] Filtering out invalid question:', JSON.stringify(q));
+          }
+          
+          return isValid;
+        })
+        .map(q => ({
+          type: q.type,
+          question: q.question,
+          options: q.type === 'multiple_choice' ? q.options : null,
+          correct_answer: q.correct_answer
+        }));
+
+      console.log('[OpenAI] Valid questions count:', validQuestions.length);
+
+      if (validQuestions.length === 0) {
+        throw new Error('No valid questions generated from AI response');
+      }
+
+      return { questions: validQuestions };
+    } catch (parseError) {
+      console.error('[OpenAI] JSON parse error:', parseError.message);
+      console.error('[OpenAI] Raw content:', content);
+      throw new Error('Failed to parse AI response');
     }
-
-    return { questions: validQuestions };
-  } catch (parseError) {
-    console.error('JSON parse error:', parseError);
-    throw new Error('Failed to parse AI response');
+  } catch (error) {
+    console.error('[OpenAI] API Error:', error.message);
+    if (error.response) {
+      console.error('[OpenAI] Response status:', error.response.status);
+      console.error('[OpenAI] Response data:', error.response.data);
+    }
+    throw error;
   }
 }

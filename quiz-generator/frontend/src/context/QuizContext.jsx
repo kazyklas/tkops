@@ -82,7 +82,10 @@ export function QuizProvider({ children }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate quiz');
+        const errorMsg = errorData.requestId 
+          ? `${errorData.error} (Request ID: ${errorData.requestId})`
+          : errorData.error || 'Failed to generate quiz';
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();

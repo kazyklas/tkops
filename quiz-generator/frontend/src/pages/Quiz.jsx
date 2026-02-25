@@ -14,8 +14,6 @@ export default function Quiz() {
     setAnswer, 
     nextQuestion, 
     prevQuestion,
-    showAd,
-    hideAd,
   } = useQuiz();
 
   const [direction, setDirection] = useState('forward');
@@ -28,11 +26,7 @@ export default function Quiz() {
 
   const handleNext = () => {
     if (currentIndex === questions.length - 1) {
-      showAd('results');
-      setTimeout(() => {
-        hideAd();
-        navigate('/results');
-      }, 5000);
+      navigate('/results');
     } else {
       setDirection('forward');
       nextQuestion();
@@ -55,24 +49,8 @@ export default function Quiz() {
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p className="loading-text">Generating your quiz...</p>
-          <div className="video-ad-placeholder">
-            <span>Video Advertisement</span>
-          </div>
         </div>
         <AdBanner position="bottom" />
-      </div>
-    );
-  }
-
-  if (showAd) {
-    return (
-      <div className="quiz-loading">
-        <AdBanner position="top" />
-        <div className="loading-container">
-          <div className="video-ad-placeholder video-ad-large">
-            <span>Video Advertisement</span>
-          </div>
-        </div>
       </div>
     );
   }

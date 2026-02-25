@@ -1,39 +1,55 @@
 :root {
-  --bg-primary: #FAFAFA;
+  --bg-primary: #F8F9FC;
   --bg-secondary: #FFFFFF;
   --bg-card: #FFFFFF;
-  --text-primary: #1A1A2E;
-  --text-secondary: #4A4A68;
-  --text-muted: #8A8AA3;
+  --bg-tertiary: #F1F3F9;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
   --accent-primary: #6366F1;
+  --accent-primary-light: #A5B4FC;
   --accent-hover: #4F46E5;
   --accent-secondary: #10B981;
+  --accent-secondary-light: #6EE7B7;
   --error: #EF4444;
   --success: #22C55E;
-  --border: #E5E7EB;
+  --warning: #F59E0B;
+  --border: #E2E8F0;
   --border-focus: #6366F1;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+  --gradient-primary: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  --gradient-bg: linear-gradient(180deg, #F8F9FC 0%, #EEF2FF 100%);
 }
 
 [data-theme="dark"] {
-  --bg-primary: #0F0F1A;
-  --bg-secondary: #1A1A2E;
-  --bg-card: #252542;
-  --text-primary: #F8FAFC;
+  --bg-primary: #0B0B14;
+  --bg-secondary: #13131F;
+  --bg-card: #1A1A2B;
+  --bg-tertiary: #252538;
+  --text-primary: #F1F5F9;
   --text-secondary: #CBD5E1;
   --text-muted: #64748B;
   --accent-primary: #818CF8;
+  --accent-primary-light: #6366F1;
   --accent-hover: #A5B4FC;
   --accent-secondary: #34D399;
+  --accent-secondary-light: #10B981;
   --error: #F87171;
   --success: #4ADE80;
-  --border: #334155;
+  --warning: #FBBF24;
+  --border: #2D2D44;
   --border-focus: #818CF8;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --gradient-primary: linear-gradient(135deg, #818CF8 0%, #A78BFA 100%);
+  --gradient-bg: linear-gradient(180deg, #0B0B14 0%, #131328 100%);
 }
 
 * {
@@ -42,13 +58,20 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: var(--bg-primary);
+  background: var(--gradient-bg);
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.6;
-  transition: background-color 0.2s, color 0.2s;
+  transition: all 0.3s ease;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -60,19 +83,28 @@ body {
 a {
   color: var(--accent-primary);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--accent-hover);
 }
 
 button {
   font-family: inherit;
   cursor: pointer;
+  border: none;
+  outline: none;
 }
 
 input, textarea {
   font-family: inherit;
+  outline: none;
+}
+
+::selection {
+  background: var(--accent-primary);
+  color: white;
 }
 
 .container {
@@ -99,13 +131,24 @@ input, textarea {
   to { opacity: 1; }
 }
 
+@keyframes fadeInUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(20px); }
+  from { opacity: 0; transform: translateX(30px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(-20px); }
+  from { opacity: 0; transform: translateX(-30px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
@@ -114,14 +157,35 @@ input, textarea {
   50% { opacity: 0.5; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .animate-slide-left {
-  animation: slideInLeft 0.25s ease-out;
+  animation: slideInLeft 0.3s ease-out;
 }
 
 .animate-slide-right {
-  animation: slideInRight 0.25s ease-out;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
 }

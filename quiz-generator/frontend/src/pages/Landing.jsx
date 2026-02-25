@@ -45,9 +45,17 @@ export default function Landing() {
   };
 
   return (
-    <div className="landing animate-fade-in">
+    <div className="landing">
       <section className="hero">
-        <h1 className="hero-title">QuizGen AI</h1>
+        <div className="hero-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          AI-Powered
+        </div>
+        <h1 className="hero-title">
+          <span>QuizGen</span> AI
+        </h1>
         <p className="hero-subtitle">Generate custom quizzes on any topic</p>
         <p className="hero-description">
           The more detailed and specific your quiz theme is, the better and more accurate the questions will be.
@@ -111,7 +119,7 @@ export default function Landing() {
                 +
               </button>
             </div>
-            <span className="form-hint">1 - 40 questions</span>
+            <span className="form-hint">Select between 1 and 40 questions</span>
           </div>
 
           <div className="form-group">
@@ -121,7 +129,7 @@ export default function Landing() {
                 className="chat-input"
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
-                placeholder="e.g. Advanced JavaScript concepts for frontend interviews"
+                placeholder="e.g. Advanced JavaScript concepts for frontend interviews, Machine learning fundamentals, World War II key events..."
                 rows={4}
               />
             </div>
@@ -142,7 +150,12 @@ export default function Landing() {
                 Generating Quiz...
               </>
             ) : (
-              'Generate Quiz'
+              <>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Generate Quiz
+              </>
             )}
           </button>
         </form>
