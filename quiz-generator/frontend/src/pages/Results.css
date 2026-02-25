@@ -1,0 +1,241 @@
+.results-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.loading-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 24px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+}
+
+.results {
+  flex: 1;
+}
+
+.results-container {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.score-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 32px;
+}
+
+.score-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.score-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.score-number {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-divider {
+  font-size: 2.5rem;
+  color: var(--text-muted);
+}
+
+.score-total {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.score-display.excellent .score-number { color: var(--success); }
+.score-display.good .score-number { color: var(--accent-secondary); }
+.score-display.average .score-number { color: #F59E0B; }
+.score-display.needs-practice .score-number { color: var(--error); }
+
+.performance-message {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.performance-message.excellent { color: var(--success); }
+.performance-message.good { color: var(--accent-secondary); }
+.performance-message.average { color: #F59E0B; }
+.performance-message.needs-practice { color: var(--error); }
+
+.score-percentage {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.answers-review {
+  margin-bottom: 32px;
+}
+
+.review-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.answer-item {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--border);
+}
+
+.answer-item.correct {
+  border-left-color: var(--success);
+}
+
+.answer-item.incorrect {
+  border-left-color: var(--error);
+}
+
+.answer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.answer-number {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.answer-status {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.answer-status.correct {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+}
+
+.answer-status.incorrect {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error);
+}
+
+.answer-question {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.answer-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.answer-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+
+.answer-label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.answer-value {
+  color: var(--text-primary);
+}
+
+.answer-value.correct {
+  color: var(--success);
+}
+
+.answer-value.incorrect {
+  color: var(--error);
+}
+
+.new-quiz-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: none;
+  background: var(--accent-primary);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.new-quiz-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (min-width: 640px) {
+  .results-container {
+    padding: 48px 24px;
+  }
+
+  .score-card {
+    padding: 48px 32px;
+  }
+
+  .score-number {
+    font-size: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .results-container {
+    padding: 64px 32px;
+  }
+}

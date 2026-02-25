@@ -1,0 +1,63 @@
+# Azure Container Apps deployment configuration
+# This YAML defines the infrastructure for Azure Container Apps
+
+$schema: https://raw.githubusercontent.com/Azure/azure-container-apps/main/schemas/v1.13.0/containerapp.json
+
+# Location: Your Azure region
+location: eastus
+
+# Resource group
+resourceGroup: quizgen-rg
+
+# Container Apps Environment
+environment:
+  name: quizgen-env
+
+# Container registry (Azure Container Registry)
+registry:
+  server: quizgenregistry.azurecr.io
+  username: quizgenregistry
+  # Use Azure Key Vault or secrets for password
+
+# Services to deploy
+services:
+  # Backend API
+  - name: quizgen-backend
+    image: quizgenregistry.azurecr.io/quizgen-backend:latest
+    targetPort: 3001
+    environmentVariables:
+      - name: NODE_ENV
+        value: production
+      - name: PORT
+        value: "3001"
+      - name: OPENAI_API_KEY
+        secretRef: openai-api-key
+    resources:
+      cpu: 0.5
+      memory: 1Gi
+    scale:
+      minReplicas: 1
+      maxReplicas: 3
+      rules:
+        - name: http-scaling
+          httpMetadata:
+            metadata:
+              concurrentRequests: "10"
+
+  # Frontend
+  - name: quizgen-frontend
+    image: quizgenregistry.azurecr.io/quizgen-frontend:latest
+    targetPort: 80
+    ingress:
+      external: true
+      targetPort: 80
+    resources:
+      cpu: 0.25
+      memory: 0.5Gi
+    scale:
+      minReplicas: 1
+      maxReplicas: 3
+
+# Dapr configuration (optional for service-to-service communication)
+dapr:
+  enabled: false
