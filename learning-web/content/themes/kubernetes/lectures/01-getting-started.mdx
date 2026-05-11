@@ -1,0 +1,141 @@
+---
+title: "Getting Started with Kubernetes"
+difficulty: "beginner"
+estimatedMinutes: 15
+description: "Set up your first Kubernetes cluster and understand core concepts."
+order: 1
+---
+
+## What is Kubernetes?
+
+Kubernetes (K8s) is an open-source container orchestration platform originally developed by Google. It automates deployment, scaling, and management of containerized applications.
+
+Key benefits:
+- **Self-healing** - Restarts failed containers
+- **Scaling** - Auto-scale based on load
+- **Service discovery** - Find services automatically
+- **Rollbacks** - Revert changes easily
+
+## Kubernetes Architecture
+
+### Cluster Components
+
+A Kubernetes cluster consists of:
+
+- **Control Plane** - Manages the cluster
+  - kube-apiserver
+  - etcd (database)
+  - kube-controller-manager
+  - kube-scheduler
+  
+- **Nodes** - Run workloads
+  - kubelet
+  - kube-proxy
+  - container runtime (containerd)
+
+### Pods
+
+The smallest deployable unit:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+spec:
+  containers:
+  - name: app
+    image: my-app:1.0
+    ports:
+    - containerPort: 8080
+```
+
+## Setting Up a Local Cluster
+
+### Using Minikube
+
+```bash
+# Install Minikube
+brew install minikube
+
+# Start cluster
+minikube start
+
+# Check status
+minikube status
+
+# Stop cluster
+minikube stop
+```
+
+### Using kind (Kubernetes IN Docker)
+
+```bash
+# Install kind
+brew install kind
+
+# Create cluster
+kind create cluster --name my-cluster
+
+# Get nodes
+kubectl get nodes
+```
+
+## Your First Deployment
+
+### Create a Deployment
+
+```bash
+# Using kubectl
+kubectl create deployment nginx --image=nginx:latest
+
+# Or from YAML
+kubectl apply -f deployment.yaml
+```
+
+### Check Status
+
+```bash
+# List pods
+kubectl get pods
+
+# Watch pods
+kubectl get pods -w
+
+# Describe pod
+kubectl describe pod my-app-pod
+
+# View logs
+kubectl logs my-app-pod
+```
+
+## kubectl Essentials
+
+The Kubernetes CLI:
+
+```bash
+# Get resources
+kubectl get pods,svc,deployments
+
+# Apply configuration
+kubectl apply -f file.yaml
+
+# Delete resources
+kubectl delete -f file.yaml
+
+# Execute in container
+kubectl exec -it my-app-pod -- /bin/bash
+
+# Port forward
+kubectl port-forward my-app-pod 8080:80
+
+# View events
+kubectl get events
+
+# Check node resources
+kubectl top nodes
+```
+
+## Summary
+
+You now understand Kubernetes architecture and can create a basic cluster. You should be comfortable with kubectl commands to manage pods and deployments.

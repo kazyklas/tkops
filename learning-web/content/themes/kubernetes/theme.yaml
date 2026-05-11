@@ -1,0 +1,4 @@
+title: "Kubernetes Fundamentals"
+description: "Learn container orchestration with Kubernetes. Deploy, scale, and manage containerized applications in production environments."
+tags: ["kubernetes", "containers", "devops", "cloud-native"]
+coverImage: "/images/kubernetes.svg"

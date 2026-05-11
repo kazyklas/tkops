@@ -1,0 +1,138 @@
+---
+title: "Databricks Jobs: Orchestrating Workflows"
+difficulty: "intermediate"
+estimatedMinutes: 15
+description: "Learn to schedule and orchestrate data pipelines using Databricks Jobs for reliable automation."
+order: 3
+---
+
+## Understanding Databricks Jobs
+
+Databricks Jobs allow you to schedule and run notebooks, JARs, or Python scripts as automated workflows. This is essential for production data pipelines.
+
+## Job Types
+
+### Notebook Jobs
+
+Run notebooks on a schedule or trigger:
+
+```python
+# In a triggered job, access parameters
+dbutils.widgets.text("input_date", "")
+input_date = dbutils.widgets.get("input_date")
+```
+
+### Python Wheel Jobs
+
+Package Python code as wheel files for reuse:
+
+```bash
+# Create a wheel file
+pip install -m build
+python -m build
+```
+
+## Creating Your First Job
+
+### Via UI
+
+1. Go to Jobs in the sidebar
+2. Click "Create Job"
+3. Configure:
+   - Name your job
+   - Select notebook or script
+   - Set parameters
+   - Choose cluster or use serverless
+   - Schedule or trigger
+
+### Via Terraform
+
+```hcl
+resource "databricks_job" "data_pipeline" {
+  name = "Daily Data Pipeline"
+  
+  notebook_task {
+    notebook_path = "/Repos/prod/pipeline"
+    base_parameters = {
+      "run_date" = "{{{{ run_id }}}}"
+    }
+  }
+  
+  schedule {
+    quartz_cron_expression = "0 0 6 * * ?"
+    timezone_id = "UTC"
+  }
+  
+  email_notifications {
+    on_failure = ["user@example.com"]
+  }
+}
+```
+
+## Job Clusters
+
+### Standard Clusters
+
+Persistent clusters for development:
+- Start once, run many jobs
+- Good for ad-hoc workloads
+- Pay for compute while running
+
+### Ephemeral Clusters
+
+Created fresh for each run:
+- Consistent environment each run
+- Lower cost for infrequent jobs
+- Slower startup time
+
+### Serverless
+
+No cluster management:
+- Instant startup
+- Auto-scaling
+- Pay per second of execution
+
+## Monitoring and Alerts
+
+### Job Runs View
+
+Track job execution:
+
+- Start/end times
+- Duration
+- Success/failure status
+- Output logs
+
+### Error Handling
+
+Configure alerts:
+
+```python
+# In your notebook
+import sys
+try:
+    # Your pipeline code
+    pass
+except Exception as e:
+    dbutils.notebook.exit(f"FAILED: {str(e)}")
+```
+
+### Retry Logic
+
+Configure retries in job settings:
+
+- Retry on failure (up to 3 times)
+- Exponential backoff
+- Skip retry for validation errors
+
+## Best Practices
+
+1. **Parameterize notebooks** - Pass dates/IDs as parameters
+2. **Use checkpoints** - Track what ran and when
+3. **Implement logging** - Track progress
+4. **Handle errors gracefully** - Don't leave jobs hanging
+5. **Monitor costs** - Match cluster to workload
+
+## Summary
+
+Databricks Jobs automate your data workflows. You can schedule notebooks, configure clusters, set up monitoring, and handle errors reliably for production pipelines.

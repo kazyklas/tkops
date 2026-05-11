@@ -1,0 +1,197 @@
+---
+title: "Working with Pods"
+difficulty: "beginner"
+estimatedMinutes: 18
+description: "Deep dive into Kubernetes Pods - the fundamental workload unit."
+order: 2
+---
+
+## Understanding Pods
+
+A Pod is the smallest deployable unit in Kubernetes. It encapsulates:
+
+- One or more containers
+- Shared storage (volumes)
+- Network identity
+- Configuration
+
+### Pod Characteristics
+
+- **Shared networking** - Containers in a pod share IP and port space
+- **Shared storage** - Can mount shared volumes
+- **Atomic scheduling** - Pods are scheduled as a unit
+
+## Pod Configuration
+
+### Basic Pod Definition
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-app
+  labels:
+    app: web
+    tier: frontend
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.25
+    ports:
+    - containerPort: 80
+```
+
+### Multi-Container Pods
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-with-logger
+spec:
+  containers:
+  - name: web
+    image: nginx:1.25
+    volumeMounts:
+    - name: shared-logs
+      mountPath: /var/log/nginx
+  
+  - name: logger
+    image: busybox
+    command: ["sh", "-c", "tail -f /var/log/nginx/access.log"]
+    volumeMounts:
+    - name: shared-logs
+      mountPath: /var/log/nginx
+```
+
+## Resource Management
+
+### Resource Requests
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: my-app
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+```
+
+### Environment Variables
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: my-app
+    env:
+    - name: DATABASE_URL
+      value: "postgres://db:5432/app"
+    - name: LOG_LEVEL
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: log-level
+```
+
+## Health Checks
+
+### Liveness Probe
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: my-app
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+```
+
+### Readiness Probe
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: my-app
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+```
+
+### Startup Probe
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: my-app
+    startupProbe:
+      httpGet:
+        path: /started
+        port: 8080
+      failureThreshold: 30
+      periodSeconds: 10
+```
+
+## Volumes in Pods
+
+### EmptyDir
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: my-app
+    volumeMounts:
+    - name: cache
+      mountPath: /tmp/cache
+  volumes:
+  - name: cache
+    emptyDir: {}
+```
+
+### HostPath
+
+```yaml
+volumes:
+- name: logs
+  hostPath:
+    path: /var/log/myapp
+    type: Directory
+```
+
+### ConfigMap as Volume
+
+```yaml
+volumes:
+- name: config
+  configMap:
+    name: app-config
+```
+
+## Lifecycle
+
+### Pod Phases
+
+- **Pending** - Being scheduled
+- **Running** - Container(s) executing
+- **Succeeded** - All containers exited successfully
+- **Failed** - Container(s) exited with failure
+- **Unknown** - Cannot communicate with node
+
+## Summary
+
+You can now create Pods with multiple containers, manage resources, configure health checks, and use volumes. Pods are the foundation for more complex Kubernetes resources.

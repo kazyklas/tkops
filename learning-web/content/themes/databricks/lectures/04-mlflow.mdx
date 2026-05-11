@@ -1,0 +1,212 @@
+---
+title: "MLflow: Machine Learning Lifecycle Management"
+difficulty: "advanced"
+estimatedMinutes: 22
+description: "Master MLflow for experiment tracking, model registry, and deployment in production ML systems."
+order: 4
+---
+
+## Introduction to MLflow
+
+MLflow is an open-source platform for managing the complete machine learning lifecycle. It provides:
+
+- Experiment tracking
+- Model registry
+- Model deployment
+- Reproducibility
+
+## Setting Up MLflow
+
+### Installation
+
+```python
+pip install mlflow
+```
+
+### Configuration
+
+Connect to your tracking server:
+
+```python
+import mlflow
+
+# For Databricks
+mlflow.set_tracking_uri("databricks")
+
+# For local
+mlflow.set_tracking_uri("http://localhost:5000")
+```
+
+## Experiment Tracking
+
+### Starting Experiments
+
+```python
+mlflow.set_experiment("/Shared/my-experiment")
+
+with mlflow.start_run():
+    # Log parameters
+    mlflow.log_param("learning_rate", 0.01)
+    mlflow.log_param("max_depth", 5)
+    
+    # Log metrics
+    mlflow.log_metric("accuracy", 0.95)
+    mlflow.log_metric("f1_score", 0.93)
+    
+    # Log model
+    mlflow.sklearn.log_model(model, "model")
+    
+    # Log artifacts
+    mlflow.log_artifact("plots/confusion_matrix.png")
+```
+
+### Comparing Runs
+
+Use the MLflow UI to compare:
+
+- Parameter combinations
+- Metric trends
+- Artifact diffs
+- Source code versions
+
+## Model Registry
+
+### Registering Models
+
+```python
+# Register after training
+model_uri = "runs:/<run_id>/model"
+model_name = "production-classifier"
+
+mv = mlflow.register_model(model_uri, model_name)
+```
+
+### Model Versions
+
+The registry tracks:
+
+- Version number
+- Stage (None, Staging, Production, Archived)
+- Description
+- Run lineage
+
+### Stage Transitions
+
+```python
+client = mlflow.tracking.MlflowClient()
+
+# Move to staging
+client.transition_model_version_stage(
+    name=model_name,
+    version=1,
+    stage="Staging"
+)
+
+# Move to production
+client.transition_model_version_stage(
+    name=model_name,
+    version=2,
+    stage="Production"
+)
+```
+
+## Model Serving
+
+### Serving Options
+
+1. **Databricks Serving** - Managed deployment
+2. **Kubernetes** - Containerized serving
+3. **Local** - Development testing
+
+### Batch Inference
+
+```python
+import mlflow.pyfunc
+
+model = mlflow.pyfunc.load_model("models:/production-classifier/Production")
+
+predictions = model.predict(pandas_df)
+```
+
+### Real-Time Serving
+
+```python
+# Define inference logic
+import pandas as pd
+
+class ClassifierWrapper(mlflow.pyfunc.PythonModel):
+    def predict(self, context, model_input):
+        return model.predict(pd.DataFrame(model_input))
+
+# Save and deploy
+mlflow.pyfunc.save_model(
+    python_model=ClassifierWrapper(),
+    path="model/"
+)
+```
+
+## Advanced Features
+
+### Custom Metrics
+
+```python
+def weighted_accuracy(eval_df, _):
+    return {
+        "weighted_accuracy": weighted_accuracy_score(
+            eval_df["prediction"],
+            eval_df["target"]
+        )
+    }
+
+mlflow.evaluate(
+    model=model_uri,
+    data=test_df,
+    targets="target",
+    metrics=[weighted_accuracy]
+)
+```
+
+### Conditional Logging
+
+```python
+# Log only under certain conditions
+with mlflow.start_run() as run:
+    if best_accuracy > threshold:
+        mlflow.log_metric("best_accuracy", best_accuracy)
+        mlflow.sklearn.log_model(model, "best_model")
+```
+
+### Metadata Logging
+
+```python
+mlflow.set_tag("team", "data-science")
+mlflow.set_tag("project", "fraud-detection")
+mlflow.log_dict({"validation": "k-fold"}, "metadata.json")
+```
+
+## Integration with Feature Store
+
+```python
+# Load features
+features = fs.get_features("customer", join_keys=["customer_id"])
+
+# Train with features
+with mlflow.start_run():
+    model = train_model(features, labels)
+    mlflow.sklearn.log_model(model, "model")
+    
+    # Log training data as artifact
+    mlflow.log_artifact(features.to_parquet(), "training_data")
+```
+
+## MLOps Best Practices
+
+1. **Version everything** - Data, code, parameters, models
+2. **Use stages** - Development → Staging → Production
+3. **Document runs** - Add descriptions and tags
+4. **Reproduce failures** - Log git commits
+5. **Automate** - CI/CD for models
+
+## Summary
+
+MLflow manages your ML lifecycle from experiment to production. You can track experiments, register models, transition stages, and deploy reliably.

@@ -1,0 +1,234 @@
+---
+title: "Services and Networking"
+difficulty: "intermediate"
+estimatedMinutes: 20
+description: "Learn to expose applications and manage network communication in Kubernetes."
+order: 3
+---
+
+## Service Overview
+
+Services provide stable network endpoints for Pods. Since Pods are ephemeral and get new IPs, Services abstract this away.
+
+## Service Types
+
+### ClusterIP (Default)
+
+Internal cluster communication:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: ClusterIP
+```
+
+### NodePort
+
+Expose on each node&apos;s IP:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 30080
+  type: NodePort
+```
+
+### LoadBalancer
+
+External load balancer:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer
+```
+
+### ExternalName
+
+DNS CNAME alias:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-service
+spec:
+  type: ExternalName
+  externalName: api.example.com
+```
+
+## Service Discovery
+
+### DNS
+
+Kubernetes provides DNS for service discovery:
+
+```bash
+# From within cluster
+curl http://my-service.default.svc.cluster.local
+
+# Short name (within same namespace)
+curl http://my-service
+```
+
+### Environment Variables
+
+Automatically available:
+
+```
+MY_SERVICE_SERVICE_HOST=10.0.0.100
+MY_SERVICE_SERVICE_PORT=80
+```
+
+## Network Policies
+
+### Basic Network Policy
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-allow
+spec:
+  podSelector:
+    matchLabels:
+      app: api
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - protocol: TCP
+      port: 8080
+```
+
+### Deny All Ingress
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+```
+
+## Ingress
+
+### Basic Ingress
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+```
+
+### TLS Ingress
+
+```yaml
+spec:
+  tls:
+  - hosts:
+    - example.com
+    secretName: tls-secret
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 80
+```
+
+## Service Mesh Integration
+
+### Istio Example
+
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-service
+spec:
+  hosts:
+  - my-service
+  http:
+  - match:
+    - headers:
+        x-canary:
+          exact: "true"
+    route:
+    - destination:
+        host: my-service
+        subset: v2
+      weight: 20
+  - route:
+    - destination:
+        host: my-service
+        subset: v1
+      weight: 80
+```
+
+## Best Practices
+
+1. Use ClusterIP for internal communication
+2. Implement NetworkPolicies for security
+3. Use Ingress for HTTP/HTTPS traffic
+4. Set appropriate resource limits
+5. Monitor service health
+
+## Summary
+
+Services provide stable networking. You can expose applications internally or externally, implement network security, and manage traffic routing with Ingress.

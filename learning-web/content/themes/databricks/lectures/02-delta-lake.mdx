@@ -1,0 +1,113 @@
+---
+title: "Delta Lake: The Foundation of the Lakehouse"
+difficulty: "intermediate"
+estimatedMinutes: 18
+description: "Learn how Delta Lake provides ACID transactions, time travel, and schema enforcement for your data lake."
+order: 2
+---
+
+## Why Delta Lake?
+
+Delta Lake is an open-source storage layer that brings ACID transactions to Apache Spark and Big Data workloads. It resolves many challenges faced by traditional data lakes.
+
+## Key Features
+
+### ACID Transactions
+
+Delta Lake provides full ACID transaction support on Spark:
+
+- **Atomicity** - All operations succeed or fail completely
+- **Isolation** - Concurrent operations don't interfere
+- **Durability** - Data persists after crashes
+
+### Time Travel
+
+Query data at any point in time using version numbers or timestamps:
+
+```python
+# Read a specific version
+df = spark.read.format("delta").option("versionAsOf", 5).load("/path/to/table")
+
+# Read as of a timestamp
+df = spark.read.format("delta").option("timestampAsOf", "2024-01-01").load("/path/to/table")
+```
+
+### Schema Enforcement
+
+Prevent bad data from entering your tables:
+
+```python
+# Define expected schema
+schema = StructType([
+    StructField("id", LongType(), False),
+    StructField("name", StringType(), True),
+    StructField("timestamp", TimestampType(), False)
+])
+
+# Write with schema enforcement
+df.write.format("delta").mode("overwrite").option("mergeSchema", "true").save("/path/to/table")
+```
+
+## Working with Delta Tables
+
+### Creating Tables
+
+```python
+# Create a Delta table from a DataFrame
+df.write.format("delta").mode("overwrite").saveAsTable("my_table")
+
+# Or use SQL
+spark.sql("CREATE TABLE my_table USING DELTA AS SELECT * FROM source")
+```
+
+### Updating Data
+
+Delta Lake makes updates simple and efficient:
+
+```python
+from delta.tables import DeltaTable
+
+deltaTable = DeltaTable.forPath(spark, "/path/to/table")
+
+# Update operation
+deltaTable.update(
+    condition="id > 100",
+    set={"status": lit("processed")}
+)
+
+# Delete operation
+deltaTable.delete(condition="status = 'deleted'")
+
+# Merge operation (upsert)
+deltaTable.alias("target").merge(
+    source_updates_df.alias("source"),
+    "target.id = source.id"
+).whenMatchedUpdate(set={
+    "name": "source.name"
+}).whenNotMatchedInsert(values={
+    "id": "source.id",
+    "name": "source.name"
+}).execute()
+```
+
+## Optimizing Delta Tables
+
+### File Compaction
+
+Over time, small files can accumulate. Use OPTIMIZE:
+
+```python
+spark.sql("OPTIMIZE my_table")
+```
+
+### Z-Ordering
+
+Cluster related data for faster queries:
+
+```sql
+OPTIMIZE my_table ZORDER BY (date, region)
+```
+
+## Summary
+
+Delta Lake transforms your data lake into a reliable Lakehouse. You now understand ACID transactions, time travel, schema enforcement, and how to perform common data operations.

@@ -1,0 +1,4 @@
+title: "Databricks Fundamentals"
+description: "Master the Databricks Lakehouse platform for data engineering, analytics, and machine learning. Learn to build scalable data pipelines and collaborative notebooks."
+tags: ["databricks", "spark", "data-engineering", "mlops"]
+coverImage: "/images/databricks.svg"

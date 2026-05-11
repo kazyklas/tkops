@@ -1,0 +1,51 @@
+---
+title: "Introduction to Databricks"
+difficulty: "beginner"
+estimatedMinutes: 12
+description: "Get started with Databricks and understand the core concepts of the Lakehouse architecture."
+order: 1
+---
+
+## What is Databricks?
+
+Databricks is a unified analytics platform built on Apache Spark that enables data science teams to collaborate on data engineering, machine learning, and analytics workloads. It combines the best of data warehouses and data lakes into a Lakehouse architecture.
+
+## Key Concepts
+
+### The Lakehouse Architecture
+
+The Lakehouse is a new, open architecture that combines the best elements of data lakes and data warehouses. Key benefits include:
+
+- **ACID transactions** - Reliable data handling
+- **Schema enforcement** - Data quality control
+- **Time travel** - Version control for data
+- **Open formats** - Interoperability with various tools
+
+### Databricks Workspace
+
+The Workspace is where you organize your:
+
+- **Notebooks** - Interactive code notebooks
+- **Libraries** - Shared code packages
+- **Experiments** - MLflow tracking
+- **Clusters** - Compute resources
+
+## Your First Notebook
+
+When you create a new notebook in Databricks, you can write code in Python, Scala, SQL, or R. The notebook environment provides:
+
+1. **Interactive execution** - Run code cells individually
+2. **Visualizations** - Built-in charting
+3. **Collaboration** - Share and edit with team members
+4. **Scheduling** - Automate notebook jobs
+
+```python
+# Example: Simple Spark DataFrame
+spark = SparkSession.builder.appName("MyFirstApp").getOrCreate()
+df = spark.read.csv("/path/to/data.csv", header=True)
+df.show()
+```
+
+## Summary
+
+In this lecture, you learned about Databricks as a unified analytics platform and the Lakehouse architecture. You should now understand the workspace organization and be ready to start writing code in notebooks.
